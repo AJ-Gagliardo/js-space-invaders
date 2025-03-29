@@ -65,6 +65,7 @@ class Enemy {
     this.y = 0;
     this.positionX = positionX;
     this.positionY = positionY;
+    this.markedForDeletion = false;
   }
 
   draw(context) {
@@ -73,6 +74,12 @@ class Enemy {
   update(x, y) {
     this.x = x + this.positionX;
     this.y = y + this.positionY;
+    // check collision enemies - projectiles
+    this.game.projectilesPool.forEach((projectile) => {
+      if (this.game.checkCollision(this, projectile)) {
+        this.markedForDeletion = true;
+      }
+    });
   }
 }
 
@@ -103,6 +110,7 @@ class Wave {
       enemy.update(this.x, this.y);
       enemy.draw(context);
     });
+    this.enemies = this.enemies.filter((object) => !object.markedForDeletion);
   }
   create() {
     for (let y = 0; y < this.game.rows; y++) {
@@ -139,6 +147,7 @@ class Game {
 
     // event listeners
     window.addEventListener("keydown", (e) => {
+      // if (!this.keys.includes(e.key))  this.keys.push(e.key);
       if (this.keys.indexOf(e.key) === -1) this.keys.push(e.key);
       if (e.key === "1") this.player.shoot();
       console.log(this.keys);
@@ -152,6 +161,7 @@ class Game {
   render(context) {
     this.player.draw(context);
     this.player.update();
+
     this.projectilesPool.forEach((projectile) => {
       projectile.update();
       projectile.draw(context);
@@ -172,6 +182,20 @@ class Game {
     for (let i = 0; i < this.projectilesPool.length; i++) {
       if (this.projectilesPool[i].free) return this.projectilesPool[i];
     }
+  }
+  // collission detectedbetween 2 rectangles
+  checkCollision(a, b) {
+    // use Return to get T or F ... I could use IF(){} but this also works
+    return (
+      // checks if the top left of rect A is to the left of  top right of Rect B
+      a.x < b.x - b.width &&
+      // checks if right top of rectangle A is to the right of  the top left part of Rect B
+      a.x + a.width > b.x &&
+      // checks if top left of rect A is to the left of bottom left of rectangle B
+      a.y < b.y + b.height &&
+      // checks if left bottom side of rectangle A is below top left side of rectangle B
+      a.y + a.height > b.y
+    );
   }
 }
 
