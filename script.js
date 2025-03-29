@@ -231,8 +231,14 @@ class Game {
     context.restore();
   }
   newWave() {
-    this.columns++;
-    this.rows++;
+    if (
+      Math.random() < 0.5 &&
+      this.columns * this.enemySize < this.width * 0.8
+    ) {
+      this.columns++;
+    } else if (this.rows * this.enemySize < this.height * 0.6) {
+      this.rows++;
+    }
     this.waves.push(new Wave(this));
   }
 }
