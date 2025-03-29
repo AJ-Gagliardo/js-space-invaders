@@ -5,7 +5,8 @@ class Player {
     this.height = 100;
     this.x = this.game.width * 0.5 - this.width * 0.5;
     this.y = this.game.height - this.height;
-    this.speed = 2;
+    this.speed = 5;
+    this.lives = 3;
   }
   draw(context) {
     context.fillRect(this.x, this.y, this.width, this.height);
@@ -82,8 +83,15 @@ class Enemy {
         this.game.score++;
       }
     });
-    // lose condition
+    // check collision enemies - player
+    if (this.game.checkCollision(this, this.game.player)) {
+      this.markedForDeletion = true;
+      if (!this.game.gameOver && this.gamescore > 0) this.game.score--;
+      this.game.player.lives--;
+      if (this.game.player.lives < 1) this.game.gameOver = true;
+    }
     if (this.y + this.height > this.game.height) {
+      // lose condition
       this.game.gameOver = true;
       this.markedForDeletion = true;
     }
@@ -152,7 +160,7 @@ class Game {
 
     this.waves = [];
     this.waves.push(new Wave(this));
-    this.wavesCount = 1;
+    this.waveCount = 1;
 
     //score
     this.score = 0;
