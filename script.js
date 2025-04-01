@@ -86,7 +86,7 @@ class Enemy {
     // check collision enemies - player
     if (this.game.checkCollision(this, this.game.player)) {
       this.markedForDeletion = true;
-      if (!this.game.gameOver && this.gamescore > 0) this.game.score--;
+      if (!this.game.gameOver && this.game.score > 0) this.game.score--;
       this.game.player.lives--;
       if (this.game.player.lives < 1) this.game.gameOver = true;
     }
@@ -216,7 +216,7 @@ class Game {
     // use Return to get T or F ... I could use IF(){} but this also works
     return (
       // checks if the top left of rect A is to the left of  top right of Rect B
-      a.x < b.x - b.width &&
+      a.x < b.x + b.width &&
       // checks if right top of rectangle A is to the right of  the top left part of Rect B
       a.x + a.width > b.x &&
       // checks if top left of rect A is to the left of bottom left of rectangle B
